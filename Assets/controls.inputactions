@@ -1,0 +1,120 @@
+{
+    "name": "controls",
+    "maps": [
+        {
+            "name": "controller",
+            "id": "867bb9dd-553e-4530-a65a-1ca63f695269",
+            "actions": [
+                {
+                    "name": "card1",
+                    "type": "Button",
+                    "id": "6b736900-a47f-4472-93b3-71262aafa53b",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "card2",
+                    "type": "Button",
+                    "id": "4689b5d1-6aa5-4fe2-a8c5-f78243654d58",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "card3",
+                    "type": "Button",
+                    "id": "946c2118-1add-4f1e-8bad-d1b8f7079a99",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "card4",
+                    "type": "Button",
+                    "id": "b857a4cf-f1de-43d6-9257-8dc97773016f",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "roleDice",
+                    "type": "Button",
+                    "id": "e8518de4-4df7-45d8-a2f8-d594bb9801b7",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                }
+            ],
+            "bindings": [
+                {
+                    "name": "",
+                    "id": "df3bedb7-495f-42ae-9a5d-c4ca419fa6c4",
+                    "path": "<Gamepad>/dpad/left",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "game controls",
+                    "action": "card1",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "2d4d7898-6181-449e-a3fe-cfe022239c1d",
+                    "path": "<Gamepad>/dpad/up",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "game controls",
+                    "action": "card2",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "8e052791-f85b-4789-8907-e42def900a47",
+                    "path": "<Gamepad>/dpad/down",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "game controls",
+                    "action": "card3",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "87cb3bfe-9f38-4041-944c-6667f3294739",
+                    "path": "<Gamepad>/dpad/right",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "game controls",
+                    "action": "card4",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "8cb58c6e-1393-4360-b9f0-c7207c556736",
+                    "path": "<Gamepad>/buttonSouth",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "game controls",
+                    "action": "roleDice",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                }
+            ]
+        }
+    ],
+    "controlSchemes": [
+        {
+            "name": "game controls",
+            "bindingGroup": "game controls",
+            "devices": []
+        }
+    ]
+}
