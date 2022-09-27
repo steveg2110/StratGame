@@ -11,6 +11,7 @@ public class GameController : MonoBehaviour {
 	[SerializeField] GameObject camera3;
 	[SerializeField] GameObject camera4;
 	[SerializeField] Banana bananaScript;
+	[SerializeField] Shop shopScript;
 	PlayerController currentPlayer;
 	[SerializeField] Image aImage;
 	int playerTurn = 1;
@@ -61,8 +62,9 @@ public class GameController : MonoBehaviour {
 			case gameState.destinationReached:
 				bool actionComplete = false;
 				if (currentPlayer.CheckSpace() == 1) {
+					// Banana Space
 					bananaScript.GiveRandomBananas(currentPlayer);
-					actionComplete = true; // banana coinage calls
+					actionComplete = true; 
 				} else if (currentPlayer.CheckSpace() == 2) {
 					if (randomCardTypeChosen == 0) {
 						randomCardTypeChosen = Random.Range(1, 3);
@@ -81,7 +83,9 @@ public class GameController : MonoBehaviour {
 						}
 					}
 				} else if (currentPlayer.CheckSpace() == 3) {
-					actionComplete = true; // replace with shop calls
+					// Shop Space
+					shopScript.OpenShopUI(currentPlayer);
+					//actionComplete = true;
 				} else {
 					actionComplete = true;
 				}
