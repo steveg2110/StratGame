@@ -3,6 +3,7 @@ using UnityEngine.AI;
 using System.Collections.Generic;
 using UnityEngine.InputSystem;
 using UnityEngine.UI;
+using TMPro;
 
 public class PlayerController : MonoBehaviour {
 
@@ -17,6 +18,7 @@ public class PlayerController : MonoBehaviour {
 	[SerializeField] Image cardTwo;
 	[SerializeField] Image cardThree;
 	[SerializeField] Image cardFour;
+	[SerializeField] TextMeshProUGUI bananaText;
 	[SerializeField] List<string> myPlayCards = new List<string>(4) { "null", "null", "null", "null" };
 	List<string> myDefenceCards = new List<string>(4) { "null", "null", "null", "null" };
 	[SerializeField] Deck cardDeck;
@@ -24,6 +26,8 @@ public class PlayerController : MonoBehaviour {
 	string tempCard = "null";
 	int tempCardType = 0; // 0 = null , 1 = play card , 2 = defence card
 	[SerializeField] Image displayCard;
+
+	int bananaCount = 0;
 
 	private void Start() {
 		UpdateMyCards(true);
@@ -142,6 +146,11 @@ public class PlayerController : MonoBehaviour {
 			}
 		}
 	}
+
+	public void AddBananas(int bananasToAdd) {
+		bananaCount += bananasToAdd;
+		bananaText.text = bananaCount.ToString();
+    }
 
 	//////////////// Input
 	public void RollDice(InputAction.CallbackContext context) {
