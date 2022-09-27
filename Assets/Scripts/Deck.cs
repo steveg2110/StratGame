@@ -1,4 +1,3 @@
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -24,5 +23,13 @@ public class Deck : MonoBehaviour {
 		} else {
 			return defenceDeckImages[0];
 		}
+	}
+
+	public string GivePlayCard() {
+		return playDeckNames[Random.Range(1, playDeckNames.Count)];
+	}
+
+	public string GiveDefenceCard() {
+		return defenceDeckNames[Random.Range(1, defenceDeckNames.Count)];
 	}
 }

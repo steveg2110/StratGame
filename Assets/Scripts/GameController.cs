@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.UI;
 
 public class GameController : MonoBehaviour {
 	[SerializeField] PlayerController player1;
@@ -10,6 +11,7 @@ public class GameController : MonoBehaviour {
 	[SerializeField] GameObject camera3;
 	[SerializeField] GameObject camera4;
 	PlayerController currentPlayer;
+	[SerializeField] Image aImage;
 	int playerTurn = 1;
 	int rollNumber = 0;
 	enum gameState {
@@ -20,16 +22,27 @@ public class GameController : MonoBehaviour {
 		nextPlayer,
 	}
 	gameState currentState = gameState.playerRoll;
+	int randomCardTypeChosen = 0; // 0 = not chosen , 1 = give play card , 2 = give defence card , 3 = selecting card pos
 
 	// Update is called once per frame
 	void Update() {
 		switch (currentState) {
 			case gameState.playerRoll:
+				aImage.enabled = true;
 				SwitchToCamera(playerTurn);
 				SelectPlayerController();
+				player1.UpdateMyCards(true);
+				player2.UpdateMyCards(true);
+				player3.UpdateMyCards(true);
+				player4.UpdateMyCards(true);
 				break;
 
 			case gameState.cardUse:
+				aImage.enabled = false;
+				player1.UpdateMyCards(false);
+				player2.UpdateMyCards(false);
+				player3.UpdateMyCards(false);
+				player4.UpdateMyCards(false);
 				currentState = gameState.playerMove;
 				break;
 
@@ -45,7 +58,35 @@ public class GameController : MonoBehaviour {
 				break;
 
 			case gameState.destinationReached:
-				currentState = gameState.nextPlayer;
+				bool actionComplete = false;
+				if (currentPlayer.CheckSpace() == 1) {
+					actionComplete = true; // replace with banana coinage calls
+				} else if (currentPlayer.CheckSpace() == 2) {
+					if (randomCardTypeChosen == 0) {
+						randomCardTypeChosen = Random.Range(1, 3);
+					} else {
+						if (randomCardTypeChosen == 1) {
+							currentPlayer.GivePlayCard();
+							randomCardTypeChosen = 3;
+						} else if (randomCardTypeChosen == 2) {
+							currentPlayer.GiveDefenceCard();
+							randomCardTypeChosen = 3;
+						} else {
+							if (currentPlayer.ReplaceCard()) {
+								actionComplete = true;
+								randomCardTypeChosen = 0;
+							}
+						}
+					}
+				} else if (currentPlayer.CheckSpace() == 3) {
+					actionComplete = true; // replace with shop calls
+				} else {
+					actionComplete = true;
+				}
+
+				if (actionComplete) {
+					currentState = gameState.nextPlayer;
+				}
 				break;
 
 			case gameState.nextPlayer:
@@ -102,7 +143,7 @@ public class GameController : MonoBehaviour {
 
 	public void CheckRollDice(int pNum) {
 		if(pNum == playerTurn && currentState == gameState.playerRoll) {
-			rollNumber = Random.Range(1, 6);
+			rollNumber = Random.Range(1, 7);
 			currentState = gameState.cardUse;
 		}
 	}
