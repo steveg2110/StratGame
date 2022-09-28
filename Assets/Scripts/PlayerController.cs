@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using UnityEngine.InputSystem;
 using UnityEngine.UI;
 using TMPro;
+using System;
 
 public class PlayerController : MonoBehaviour {
 
@@ -20,9 +21,10 @@ public class PlayerController : MonoBehaviour {
 	[SerializeField] Image cardFour;
 	[SerializeField] TextMeshProUGUI bananaText;
 	[SerializeField] List<string> myPlayCards = new List<string>(4) { "null", "null", "null", "null" };
-	List<string> myDefenceCards = new List<string>(4) { "null", "null", "null", "null" };
+	[SerializeField] List<string> myDefenceCards = new List<string>(4) { "null", "null", "null", "null" };
 	[SerializeField] Deck cardDeck;
 	string keyPressed = "null";
+	bool hasRolled = false;
 	string tempCard = "null";
 	int tempCardType = 0; // 0 = null , 1 = play card , 2 = defence card
 	[SerializeField] Image displayCard;
@@ -34,11 +36,33 @@ public class PlayerController : MonoBehaviour {
 	}
 
 	private void LateUpdate() {
-		keyPressed = "null";
+		keyPressed = "null"; 
+		hasRolled = false;
+	}
+
+	public string GetArrowKey() {
+		return keyPressed;
 	}
 
 	public void MovePlayerForward() {
 		playerPosNum++;
+		if (playerPosNum < 1) {
+			playerPosNum = 1;
+		} else if (playerPosNum > 120) {
+			playerPosNum = 120;
+		}
+		Vector3 destination = MainPath[playerPosNum - 1].transform.Find(playerNumString).transform.position;
+		player.SetDestination(destination);
+	}
+
+	public void MovePlayerMultiple(int moveAmount) {
+		
+		playerPosNum += moveAmount;
+		if(playerPosNum < 1) {
+			playerPosNum = 1;
+		} else if (playerPosNum > 120) {
+			playerPosNum = 120;
+		}
 		Vector3 destination = MainPath[playerPosNum - 1].transform.Find(playerNumString).transform.position;
 		player.SetDestination(destination);
 	}
@@ -98,6 +122,22 @@ public class PlayerController : MonoBehaviour {
 		tempCardType = 2;
 	}
 
+	public string GetCard(bool playCard, int card) {
+		if (playCard) {
+			return myPlayCards[card];
+		} else {
+			return myDefenceCards[card];
+		}
+	}
+
+	public void RemoveCard(bool playCard,int card) {
+		if (playCard) {
+			myPlayCards[card] = "null";
+		} else {
+			myDefenceCards[card] = "mull";
+		}
+	}
+
 	public bool ReplaceCard() {
 		displayCard.enabled = true;
 		if(tempCardType == 1) {
@@ -147,6 +187,10 @@ public class PlayerController : MonoBehaviour {
 		}
 	}
 
+	public bool CheckRollButton() {
+		return hasRolled;
+	}
+
 	public void AddBananas(int bananasToAdd) {
 		bananaCount += bananasToAdd;
 		bananaText.text = bananaCount.ToString();
@@ -154,7 +198,7 @@ public class PlayerController : MonoBehaviour {
 
 	//////////////// Input
 	public void RollDice(InputAction.CallbackContext context) {
-		gameController.CheckRollDice(pNum);
+		hasRolled = true;
 	}
 	public void UseCard1(InputAction.CallbackContext context) {
 		keyPressed = "left";

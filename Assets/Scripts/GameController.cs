@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.UI;
+using TMPro;
 
 public class GameController : MonoBehaviour {
 	[SerializeField] PlayerController player1;
@@ -14,8 +15,22 @@ public class GameController : MonoBehaviour {
 	[SerializeField] Shop shopScript;
 	PlayerController currentPlayer;
 	[SerializeField] Image aImage;
+	[SerializeField] Image usedCardImageHolder;
+	[SerializeField] TextMeshProUGUI rollNumberHolder;
+	[SerializeField] Deck cardDeck;
+	[SerializeField] GameObject selectionUI;
+	[SerializeField] TextMeshProUGUI timerUI;
 	int playerTurn = 1;
 	int rollNumber = 0;
+	string playerPlayCard = "null";
+	int playerPlayCardNumber = 5;
+	bool cardInUse = true;
+	bool cardPlayed = false; bool defenceCardPlayed = false;
+	float cardUseTimer = 6f;
+	string playerDefenceCard = "null";
+	int playerDefenceCardNumber;
+	int selectedPlayertoAttack = 5;
+	bool playerAttacked = false;
 	enum gameState {
 		playerRoll,
 		cardUse,
@@ -37,23 +52,54 @@ public class GameController : MonoBehaviour {
 				player2.UpdateMyCards(true);
 				player3.UpdateMyCards(true);
 				player4.UpdateMyCards(true);
+				if (!cardPlayed) {
+					CheckForPlayCardUse();
+				}
+				CheckForRoll();
 				break;
 
 			case gameState.cardUse:
 				aImage.enabled = false;
+				rollNumberHolder.enabled = true;
 				player1.UpdateMyCards(false);
 				player2.UpdateMyCards(false);
 				player3.UpdateMyCards(false);
 				player4.UpdateMyCards(false);
-				currentState = gameState.playerMove;
+				if(cardUseTimer <= 0) {
+					timerUI.enabled = false;
+					if (defenceCardPlayed) {
+						UseDefenceCard();
+						Debug.Log(playerPlayCard);
+						defenceCardPlayed = false;
+					}
+					cardInUse = UseCard();
+					if (!cardInUse) {
+						cardPlayed = false;
+						playerPlayCard = "null";
+						playerPlayCardNumber = 5;
+						playerDefenceCard = "null";
+						playerDefenceCardNumber = 5;
+						currentState = gameState.playerMove;
+					}
+				} else {
+					timerUI.enabled = true;
+					timerUI.text = ((int)cardUseTimer).ToString();
+					if (!defenceCardPlayed && cardPlayed) {
+						CheckForDefenceCardUse();
+					}
+					cardUseTimer -= Time.deltaTime;
+				}
 				break;
 
 			case gameState.playerMove:
 				if (!currentPlayer.IsMoving()) {
+					rollNumberHolder.text = rollNumber.ToString();
 					if (rollNumber > 0) {
 						currentPlayer.MovePlayerForward();
 						rollNumber--;
 					} else if (rollNumber <= 0) {
+						rollNumberHolder.enabled = false;
+						usedCardImageHolder.enabled = false;
 						currentState = gameState.destinationReached;
 					}
 				}
@@ -111,6 +157,172 @@ public class GameController : MonoBehaviour {
 		}
 	}
 
+	private void CheckForPlayCardUse() {
+		string pInput = currentPlayer.GetArrowKey();
+
+		if (pInput == "left") {
+			playerPlayCardNumber = 0;
+		} else if (pInput == "up") {
+			playerPlayCardNumber = 1;
+		} else if (pInput == "down") {
+			playerPlayCardNumber = 2;
+		} else if (pInput == "right") {
+			playerPlayCardNumber = 3;
+		} else {
+			return;
+		}
+
+		if (currentPlayer.GetCard(true, playerPlayCardNumber) != "null") {
+			playerPlayCard = currentPlayer.GetCard(true, playerPlayCardNumber);
+			usedCardImageHolder.sprite = cardDeck.FindPlayCardSprite(playerPlayCard);
+			currentPlayer.RemoveCard(true, playerPlayCardNumber);
+			cardPlayed = true;
+			usedCardImageHolder.enabled = true;
+		}
+	}
+
+	private void SelectPlayerToAttack() {
+		string pInput = currentPlayer.GetArrowKey();
+
+		if (pInput == "left") {
+			selectedPlayertoAttack = 1;
+		} else if (pInput == "up") {
+			selectedPlayertoAttack = 2;
+		} else if (pInput == "right") {
+			selectedPlayertoAttack = 3;
+		} else if (pInput == "down") {
+			selectedPlayertoAttack = 4;
+		} else {
+			return;
+		}
+	}
+
+	private void CheckForDefenceCardUse() {
+		for(int i = 0; i < 4; i++) {
+			PlayerController pCheck;
+			if(i == 0) {
+				pCheck = player1;
+			} else if(i == 1) {
+				pCheck = player2;
+			} else if (i == 2) {
+				pCheck = player3;
+			} else {
+				pCheck = player4;
+			}
+
+			if(pCheck != currentPlayer) {
+				string pInput = pCheck.GetArrowKey();
+
+				if (pInput == "left") {
+					playerDefenceCardNumber = 0;
+				} else if (pInput == "up") {
+					playerDefenceCardNumber = 1;
+				} else if (pInput == "down") {
+					playerDefenceCardNumber = 2;
+				} else if (pInput == "right") {
+					playerDefenceCardNumber = 3;
+				} else {
+					playerDefenceCardNumber = 4;
+				}
+
+				if(playerDefenceCardNumber != 4) {
+					if (pCheck.GetCard(false, playerDefenceCardNumber) != "null") {
+						playerDefenceCard = pCheck.GetCard(false, playerDefenceCardNumber);
+						usedCardImageHolder.sprite = cardDeck.FindDefenceCardSprite(playerDefenceCard);
+						pCheck.RemoveCard(false, playerDefenceCardNumber);
+						defenceCardPlayed = true;
+						return;
+					}
+				}
+			}
+		}
+	}
+
+	private bool UseCard() {
+		if (playerPlayCard == "banana") {
+			Debug.Log(rollNumber);
+			rollNumber = rollNumber * 2;
+			rollNumberHolder.text = rollNumber.ToString();
+			Debug.Log(rollNumber);
+			return false;
+		} else if (playerPlayCard == "bomb") {
+			selectionUI.SetActive(false);
+			if (selectedPlayertoAttack == 5) {
+				selectionUI.SetActive(true);
+				SelectPlayerToAttack();
+			} else if (selectedPlayertoAttack == 1) {
+				if (!playerAttacked) {
+					SwitchToCamera(1);
+					player1.MovePlayerMultiple(-3);
+					playerAttacked = true;
+				} else {
+					if (!player1.IsMoving()) {
+						SwitchToCamera(playerTurn);
+						selectedPlayertoAttack = 5;
+						playerAttacked = false;
+						return false;
+					}
+				}
+			} else if (selectedPlayertoAttack == 2) {
+				if (!playerAttacked) {
+					SwitchToCamera(2);
+					player2.MovePlayerMultiple(-3);
+					playerAttacked = true;
+				} else {
+					if (!player2.IsMoving()) {
+						SwitchToCamera(playerTurn);
+						selectedPlayertoAttack = 5;
+						playerAttacked = false;
+						return false;
+					}
+				}
+			} else if (selectedPlayertoAttack == 3) {
+				if (!playerAttacked) {
+					SwitchToCamera(3);
+					player3.MovePlayerMultiple(-3);
+					playerAttacked = true;
+				} else {
+					if (!player3.IsMoving()) {
+						SwitchToCamera(playerTurn);
+						selectedPlayertoAttack = 5;
+						playerAttacked = false;
+						return false;
+					}
+				}
+			} else if (selectedPlayertoAttack == 4) {
+				if (!playerAttacked) {
+					SwitchToCamera(4);
+					player4.MovePlayerMultiple(-3);
+					playerAttacked = true;
+				} else {
+					if (!player4.IsMoving()) {
+						SwitchToCamera(playerTurn);
+						selectedPlayertoAttack = 5;
+						playerAttacked = false;
+						return false;
+					}
+				}
+			}
+			return true;
+		} else {
+			return false;
+		}
+	}
+
+	private void UseDefenceCard() {
+		Debug.Log(playerDefenceCard);
+		if (playerDefenceCard == "cancle") {
+			playerPlayCard = "null";
+			playerPlayCardNumber = 5;
+			Debug.Log("played cancle");
+			return;
+		} else if (playerDefenceCard == "shield") {
+			return;
+		} else {
+			return;
+		}
+	}
+
 	private void SelectPlayerController() {
 		if (playerTurn == 1) {
 			currentPlayer = player1;
@@ -147,10 +359,13 @@ public class GameController : MonoBehaviour {
 		}
 	}
 
-	public void CheckRollDice(int pNum) {
-		if(pNum == playerTurn && currentState == gameState.playerRoll) {
+	private void CheckForRoll() {
+		if(currentPlayer.CheckRollButton()) {
 			rollNumber = Random.Range(1, 7);
+			rollNumberHolder.text = rollNumber.ToString();
 			currentState = gameState.cardUse;
+			cardInUse = true;
+			cardUseTimer = 6f;
 		}
 	}
 }
