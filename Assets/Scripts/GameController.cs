@@ -31,6 +31,7 @@ public class GameController : MonoBehaviour {
 	int playerDefenceCardNumber;
 	int selectedPlayertoAttack = 5;
 	bool playerAttacked = false;
+	bool shopOpened = false;
 	enum gameState {
 		playerRoll,
 		cardUse,
@@ -130,8 +131,23 @@ public class GameController : MonoBehaviour {
 					}
 				} else if (currentPlayer.CheckSpace() == 3) {
 					// Shop Space
-					shopScript.OpenShopUI(currentPlayer);
-					//actionComplete = true;
+					if (!shopOpened) {
+						shopScript.OpenShopUI(currentPlayer);
+						shopOpened = true;
+					}
+					if (shopScript.GetActionComplete()) {
+						shopScript.SetActionComplete();
+						actionComplete = true;
+						shopOpened = false;
+                    } 
+					if (shopScript.ButtonClicked()){
+						shopScript.RandomCard();
+						if (shopScript.GetActionComplete()) {
+							shopScript.SetActionComplete();
+							actionComplete = true;
+							shopOpened = false;
+                        }
+                    }
 				} else {
 					actionComplete = true;
 				}
@@ -368,4 +384,5 @@ public class GameController : MonoBehaviour {
 			cardUseTimer = 6f;
 		}
 	}
+
 }

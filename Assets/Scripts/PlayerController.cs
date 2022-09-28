@@ -33,10 +33,11 @@ public class PlayerController : MonoBehaviour {
 
 	private void Start() {
 		UpdateMyCards(true);
+		bananaText.text = bananaCount.ToString();
 	}
 
 	private void LateUpdate() {
-		keyPressed = "null"; 
+		keyPressed = "null";
 		hasRolled = false;
 	}
 
@@ -56,9 +57,9 @@ public class PlayerController : MonoBehaviour {
 	}
 
 	public void MovePlayerMultiple(int moveAmount) {
-		
+
 		playerPosNum += moveAmount;
-		if(playerPosNum < 1) {
+		if (playerPosNum < 1) {
 			playerPosNum = 1;
 		} else if (playerPosNum > 120) {
 			playerPosNum = 120;
@@ -77,7 +78,7 @@ public class PlayerController : MonoBehaviour {
 	}
 
 	public bool IsMoving() {
-		if(player.remainingDistance <= 0.25) {
+		if (player.remainingDistance <= 0.25) {
 			return false;
 		} else {
 			return true;
@@ -130,7 +131,7 @@ public class PlayerController : MonoBehaviour {
 		}
 	}
 
-	public void RemoveCard(bool playCard,int card) {
+	public void RemoveCard(bool playCard, int card) {
 		if (playCard) {
 			myPlayCards[card] = "null";
 		} else {
@@ -140,7 +141,7 @@ public class PlayerController : MonoBehaviour {
 
 	public bool ReplaceCard() {
 		displayCard.enabled = true;
-		if(tempCardType == 1) {
+		if (tempCardType == 1) {
 			UpdateMyCards(true);
 			displayCard.sprite = cardDeck.FindPlayCardSprite(tempCard);
 			if (keyPressed == "left") {
@@ -194,6 +195,15 @@ public class PlayerController : MonoBehaviour {
 	public void AddBananas(int bananasToAdd) {
 		bananaCount += bananasToAdd;
 		bananaText.text = bananaCount.ToString();
+	}
+
+	public void RemoveBananas(int bananasToRemove) {
+		bananaCount -= bananasToRemove;
+		bananaText.text = bananaCount.ToString();
+	}
+
+	public int GetBananaCount() {
+		return bananaCount;
     }
 
 	//////////////// Input

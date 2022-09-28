@@ -8,7 +8,7 @@ public class Banana : MonoBehaviour
     [SerializeField] GameController gameController;
 
     public void GiveRandomBananas(PlayerController player) {
-        int randomBananaNum = Random.Range(1, 4);
+        int randomBananaNum = Random.Range(2, 4);
         player.AddBananas(randomBananaNum);
     }
 
