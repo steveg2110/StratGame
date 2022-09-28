@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
+using UnityEngine.SceneManagement;
 
 public class GameController : MonoBehaviour {
 	[SerializeField] PlayerController player1;
@@ -14,19 +15,20 @@ public class GameController : MonoBehaviour {
 	[SerializeField] Banana bananaScript;
 	[SerializeField] Shop shopScript;
 	PlayerController currentPlayer;
-	[SerializeField] Image aImage;
+	[SerializeField] GameObject aImage;
 	[SerializeField] Image usedCardImageHolder;
 	[SerializeField] TextMeshProUGUI rollNumberHolder;
 	[SerializeField] Deck cardDeck;
 	[SerializeField] GameObject selectionUI;
 	[SerializeField] TextMeshProUGUI timerUI;
+	[SerializeField] TextMeshProUGUI instruction2;
 	int playerTurn = 1;
 	int rollNumber = 0;
 	string playerPlayCard = "null";
 	int playerPlayCardNumber = 5;
 	bool cardInUse = true;
 	bool cardPlayed = false; bool defenceCardPlayed = false;
-	float cardUseTimer = 6f;
+	float cardUseTimer = 4f;
 	string playerDefenceCard = "null";
 	int playerDefenceCardNumber;
 	int selectedPlayertoAttack = 5;
@@ -46,7 +48,7 @@ public class GameController : MonoBehaviour {
 	void Update() {
 		switch (currentState) {
 			case gameState.playerRoll:
-				aImage.enabled = true;
+				aImage.SetActive(true);
 				SwitchToCamera(playerTurn);
 				SelectPlayerController();
 				player1.UpdateMyCards(true);
@@ -60,7 +62,7 @@ public class GameController : MonoBehaviour {
 				break;
 
 			case gameState.cardUse:
-				aImage.enabled = false;
+				aImage.SetActive(false);
 				rollNumberHolder.enabled = true;
 				player1.UpdateMyCards(false);
 				player2.UpdateMyCards(false);
@@ -68,9 +70,9 @@ public class GameController : MonoBehaviour {
 				player4.UpdateMyCards(false);
 				if(cardUseTimer <= 0) {
 					timerUI.enabled = false;
+					instruction2.enabled = false;
 					if (defenceCardPlayed) {
 						UseDefenceCard();
-						Debug.Log(playerPlayCard);
 						defenceCardPlayed = false;
 					}
 					cardInUse = UseCard();
@@ -84,6 +86,7 @@ public class GameController : MonoBehaviour {
 					}
 				} else {
 					timerUI.enabled = true;
+					instruction2.enabled = true;
 					timerUI.text = ((int)cardUseTimer).ToString();
 					if (!defenceCardPlayed && cardPlayed) {
 						CheckForDefenceCardUse();
@@ -95,6 +98,17 @@ public class GameController : MonoBehaviour {
 			case gameState.playerMove:
 				if (!currentPlayer.IsMoving()) {
 					rollNumberHolder.text = rollNumber.ToString();
+					if (currentPlayer.GetPlayerPos() == 120) {
+						if (currentPlayer == player1) {
+							SceneManager.LoadScene("player1win");
+						} else if (currentPlayer == player2) {
+							SceneManager.LoadScene("player2win");
+						} else if (currentPlayer == player3) {
+							SceneManager.LoadScene("player3win");
+						} else if (currentPlayer == player4) {
+							SceneManager.LoadScene("player4win");
+						}
+					}
 					if (rollNumber > 0) {
 						currentPlayer.MovePlayerForward();
 						rollNumber--;
@@ -256,10 +270,8 @@ public class GameController : MonoBehaviour {
 
 	private bool UseCard() {
 		if (playerPlayCard == "banana") {
-			Debug.Log(rollNumber);
 			rollNumber = rollNumber * 2;
 			rollNumberHolder.text = rollNumber.ToString();
-			Debug.Log(rollNumber);
 			return false;
 		} else if (playerPlayCard == "bomb") {
 			selectionUI.SetActive(false);
@@ -320,6 +332,10 @@ public class GameController : MonoBehaviour {
 				}
 			}
 			return true;
+		} else if (playerPlayCard == "bananabunch") {
+			rollNumber = rollNumber * 3;
+			rollNumberHolder.text = rollNumber.ToString();
+			return false;
 		} else {
 			return false;
 		}
@@ -381,7 +397,7 @@ public class GameController : MonoBehaviour {
 			rollNumberHolder.text = rollNumber.ToString();
 			currentState = gameState.cardUse;
 			cardInUse = true;
-			cardUseTimer = 6f;
+			cardUseTimer = 4f;
 		}
 	}
 

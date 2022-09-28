@@ -49,6 +49,15 @@
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": false
+                },
+                {
+                    "name": "exitGame",
+                    "type": "Button",
+                    "id": "5bfd8aaa-fd7f-41a9-909c-dee6e29ff84b",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
                 }
             ],
             "bindings": [
@@ -159,6 +168,17 @@
                     "processors": "",
                     "groups": "controller",
                     "action": "roleDice",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "42e7a727-436d-41b8-ad56-98bc74a6ea40",
+                    "path": "<Keyboard>/escape",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "Keyboard;controller",
+                    "action": "exitGame",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

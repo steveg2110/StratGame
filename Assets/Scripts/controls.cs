@@ -71,6 +71,15 @@ public partial class @Controls : IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""exitGame"",
+                    ""type"": ""Button"",
+                    ""id"": ""5bfd8aaa-fd7f-41a9-909c-dee6e29ff84b"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -183,6 +192,17 @@ public partial class @Controls : IInputActionCollection2, IDisposable
                     ""action"": ""roleDice"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""42e7a727-436d-41b8-ad56-98bc74a6ea40"",
+                    ""path"": ""<Keyboard>/escape"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""Keyboard;controller"",
+                    ""action"": ""exitGame"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         }
@@ -219,6 +239,7 @@ public partial class @Controls : IInputActionCollection2, IDisposable
         m_controller_card3 = m_controller.FindAction("card3", throwIfNotFound: true);
         m_controller_card4 = m_controller.FindAction("card4", throwIfNotFound: true);
         m_controller_roleDice = m_controller.FindAction("roleDice", throwIfNotFound: true);
+        m_controller_exitGame = m_controller.FindAction("exitGame", throwIfNotFound: true);
     }
 
     public void Dispose()
@@ -283,6 +304,7 @@ public partial class @Controls : IInputActionCollection2, IDisposable
     private readonly InputAction m_controller_card3;
     private readonly InputAction m_controller_card4;
     private readonly InputAction m_controller_roleDice;
+    private readonly InputAction m_controller_exitGame;
     public struct ControllerActions
     {
         private @Controls m_Wrapper;
@@ -292,6 +314,7 @@ public partial class @Controls : IInputActionCollection2, IDisposable
         public InputAction @card3 => m_Wrapper.m_controller_card3;
         public InputAction @card4 => m_Wrapper.m_controller_card4;
         public InputAction @roleDice => m_Wrapper.m_controller_roleDice;
+        public InputAction @exitGame => m_Wrapper.m_controller_exitGame;
         public InputActionMap Get() { return m_Wrapper.m_controller; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -316,6 +339,9 @@ public partial class @Controls : IInputActionCollection2, IDisposable
                 @roleDice.started -= m_Wrapper.m_ControllerActionsCallbackInterface.OnRoleDice;
                 @roleDice.performed -= m_Wrapper.m_ControllerActionsCallbackInterface.OnRoleDice;
                 @roleDice.canceled -= m_Wrapper.m_ControllerActionsCallbackInterface.OnRoleDice;
+                @exitGame.started -= m_Wrapper.m_ControllerActionsCallbackInterface.OnExitGame;
+                @exitGame.performed -= m_Wrapper.m_ControllerActionsCallbackInterface.OnExitGame;
+                @exitGame.canceled -= m_Wrapper.m_ControllerActionsCallbackInterface.OnExitGame;
             }
             m_Wrapper.m_ControllerActionsCallbackInterface = instance;
             if (instance != null)
@@ -335,6 +361,9 @@ public partial class @Controls : IInputActionCollection2, IDisposable
                 @roleDice.started += instance.OnRoleDice;
                 @roleDice.performed += instance.OnRoleDice;
                 @roleDice.canceled += instance.OnRoleDice;
+                @exitGame.started += instance.OnExitGame;
+                @exitGame.performed += instance.OnExitGame;
+                @exitGame.canceled += instance.OnExitGame;
             }
         }
     }
@@ -364,5 +393,6 @@ public partial class @Controls : IInputActionCollection2, IDisposable
         void OnCard3(InputAction.CallbackContext context);
         void OnCard4(InputAction.CallbackContext context);
         void OnRoleDice(InputAction.CallbackContext context);
+        void OnExitGame(InputAction.CallbackContext context);
     }
 }

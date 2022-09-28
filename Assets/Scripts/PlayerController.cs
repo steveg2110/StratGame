@@ -28,8 +28,13 @@ public class PlayerController : MonoBehaviour {
 	string tempCard = "null";
 	int tempCardType = 0; // 0 = null , 1 = play card , 2 = defence card
 	[SerializeField] Image displayCard;
+	[SerializeField] GameObject info;
 
 	int bananaCount = 0;
+
+	public int GetPlayerPos() {
+		return playerPosNum;
+	}
 
 	private void Start() {
 		UpdateMyCards(true);
@@ -141,24 +146,29 @@ public class PlayerController : MonoBehaviour {
 
 	public bool ReplaceCard() {
 		displayCard.enabled = true;
+		info.SetActive(true);
 		if (tempCardType == 1) {
 			UpdateMyCards(true);
 			displayCard.sprite = cardDeck.FindPlayCardSprite(tempCard);
 			if (keyPressed == "left") {
 				myPlayCards[0] = tempCard;
 				displayCard.enabled = false;
+				info.SetActive(false);
 				return true;
 			} else if (keyPressed == "up") {
 				myPlayCards[1] = tempCard;
 				displayCard.enabled = false;
+				info.SetActive(false);
 				return true;
 			} else if (keyPressed == "down") {
 				myPlayCards[2] = tempCard;
 				displayCard.enabled = false;
+				info.SetActive(false);
 				return true;
 			} else if (keyPressed == "right") {
 				myPlayCards[3] = tempCard;
 				displayCard.enabled = false;
+				info.SetActive(false);
 				return true;
 			} else {
 				return false;
@@ -169,18 +179,22 @@ public class PlayerController : MonoBehaviour {
 			if (keyPressed == "left") {
 				myDefenceCards[0] = tempCard;
 				displayCard.enabled = false;
+				info.SetActive(false);
 				return true;
 			} else if (keyPressed == "up") {
 				myDefenceCards[1] = tempCard;
 				displayCard.enabled = false;
+				info.SetActive(false);
 				return true;
 			} else if (keyPressed == "down") {
 				myDefenceCards[2] = tempCard;
 				displayCard.enabled = false;
+				info.SetActive(false);
 				return true;
 			} else if (keyPressed == "right") {
 				myDefenceCards[3] = tempCard;
 				displayCard.enabled = false;
+				info.SetActive(false);
 				return true;
 			} else {
 				return false;
@@ -223,5 +237,7 @@ public class PlayerController : MonoBehaviour {
 		keyPressed = "right";
 	}
 
-
+	public void quitGame(InputAction.CallbackContext context) {
+		Application.Quit();
+	}
 }
